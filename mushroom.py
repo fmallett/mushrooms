@@ -1,14 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Mar 18 22:31:49 2018
-@author: martinthoma
-notes: first script to classify the two spirals with sklearn package. 
-Best result with C = 10. For higher C-values no significant improvement
-C : float, optional (default=1.0)
-Penalty parameter C of the error term.
-When noicy data, use C < 1. Because out data is clean we take high C value
-"""
+
 # Importing the libraries
 import numpy as np
 import matplotlib.pyplot as plt
@@ -18,13 +8,31 @@ import sklearn.cross_validation as sklearn
 
 # Importing the dataset
 dataset = pd.read_csv('mushrooms.csv')
-X = dataset.iloc[:, 1: 23].values
-y = dataset.iloc[:, 0].values
+X = dataset.iloc[:, 1: 23].values #we dont want the 'class' column as this is the dependant variable
+y = dataset.iloc[:, 0].values #this is the dependant variable
 
 """# Feature Scaling
 from sklearn.preprocessing import StandardScaler
 sc = StandardScaler()
 X = sc.fit_transform(X)"""
+
+
+#Encoding independant variable
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+labelencoder_X = LabelEncoder()
+X[:, 1] = labelencoder_X.fit_transform(X[:, 1])
+onehotencoder = OneHotEncoder(categorical_features = [1])
+X = onehotencoder.fit_transform(X).toarray()
+
+"""#Encoding the dependant variable
+labelencoder_y = LabelEncoder()
+y = labelencoder_y.fit_transform(y)"""
+
+
+
+
+
+
 
 #split data for training and testing
 from sklearn.cross_validation import  train_test_split
@@ -37,6 +45,9 @@ from sklearn.svm import SVC
 classifier = SVC(kernel = 'rbf', random_state = 0, C = 1)
 classifier.fit(X, y)
 
+
+
+##-------------Wo
 # Visualising the classifying resultss
 from matplotlib.colors import ListedColormap
 X_set, y_set = X, y
