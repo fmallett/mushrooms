@@ -20,9 +20,15 @@ X = sc.fit_transform(X)"""
 #Encoding independant variable
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 labelencoder_X = LabelEncoder()
+X[:, 0] = labelencoder_X.fit_transform(X[:, 0])
+onehotencoder = OneHotEncoder(categorical_features = [0])
+X = onehotencoder.fit_transform(X).toarray
+
+
+labelencoder_X = LabelEncoder()
 X[:, 1] = labelencoder_X.fit_transform(X[:, 1])
 onehotencoder = OneHotEncoder(categorical_features = [1])
-X = onehotencoder.fit_transform(X).toarray()
+X = onehotencoder.fit_transform(X).toarray
 
 """#Encoding the dependant variable
 labelencoder_y = LabelEncoder()
