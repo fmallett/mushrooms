@@ -43,5 +43,11 @@ regressor.fit(X_train, y_train)
 
 # Backward Elimination
 import statsmodels.formula.api as sm
-X_train = np.append(arr = np.ones((np.shape(X_train)[0],1)).astype(int), values = X_train, axis = 1)
+
+def backward_elimination(X_train, p-Value):
+    X_train = np.append(arr = np.ones((np.shape(X_train)[0],1)).astype(int), values = X_train, axis = 1)
+    regressor_OLS = smOLS(endog = y_train, exog = X_opt).fit()
+    regressor_OLS.summary()
+    
+
 
