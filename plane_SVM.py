@@ -33,7 +33,7 @@ X_train, X_test, y_train, y_test = train_test_split(X,y, test_size = 0.33, rando
 
 #Fitting to SVC model
 from sklearn import svm
-cl = svm.SVC(C = 0.1 )
+cl = svm.SVC(C = 0.1)
 cl.fit(X_train, y_train)
 
 #Fitting test data
