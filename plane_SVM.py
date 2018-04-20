@@ -30,17 +30,17 @@ y = pd.get_dummies(y)
 X = X.iloc[:,1:].values
 y = y.iloc[:,1:].values
 
-X_train, X_test, y_train, y_test = train_test_split(X,y, test_size = 0.33, random_state = 1)
+X_train, X_test, y_train, y_test = train_test_split(X,y, test_size = 0.5, random_state = 1)
 
 #Fitting to SVC model
 from sklearn import svm
-cl = svm.SVC(C = 0.1)
-cl.fit(X_train, y_train)
+cl = svm.SVC()
 
 #Optimizing the parameters of the SVM
+from sklearn.metrics import classification_report
 #Spezifiy parameters and distributions to sample
-parameters = {'kernel':('linear', 'rbf'),
-                'C':[0.0001, 0.001, 0.01, 0.1, 1],
+parameters = {'kernel': ('linear', 'rbf'),
+                'C':[ 0.01, 0.1, 1],
                 'gamma':[0.0001, 0.001, 0.01, 0.1, 1]
               }
 #Randomized Search Method
@@ -50,16 +50,23 @@ from sklearn.model_selection import RandomizedSearchCV
 n_iter_search = 5
 random_search = RandomizedSearchCV(cl, param_distributions=parameters, n_iter=n_iter_search)
 random_search.fit(X,y)
+print("Best parameters:", random_search.best_params_)
+print(classification_report(y_test, random_search.predict(X_test))) 
 
 #Grid Search Method
 from sklearn.model_selection import GridSearchCV
 grid_search = GridSearchCV(cl, parameters)
 grid_search.fit(X, y) #iterate over all configurations
+print("Best parameters:", grid_search.best_params_)
+print(classification_report(y_test, grid_search.predict(X_test))) 
+
+#Fitting to SVC model with optimized parameters
+clf = svm.SVC(random_search.best_params_['C'],random_search.best_params_['kernel'],3,random_search.best_params_['gamma'])
+clf.fit(X_train,y_train)
 
 
 #Fitting test data
-y_predict = cl.predict(X_test)
-
+y_predict = clf.predict(X_test)
 
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix 
@@ -68,44 +75,45 @@ cm = confusion_matrix(y_test, y_predict)
 print(score)
 print(cm)
 
-#Fitting to linear model 
-cl_linear = svm.LinearSVC()
-cl_linear.fit(X_train,y_train)
-
-
-y_predict_linear = cl_linear.predict(X_test)
-score = accuracy_score(y_test, y_predict_linear)
-print(score)
-
-
-
-
-#we’re fitting the model on the training data and trying to predict the test data
-from sklearn import datasets, linear_model
-from sklearn.model_selection import train_test_split
-from matplotlib import pyplot as plt
-
-lm = linear_model.LinearRegression()
-model = lm.fit(X_train, y_train)
-predictions = lm.predict(X_test)
-
-#plot the model
-## The line / model
-plt.scatter(y_test, predictions)
-plt.xlabel('True values')
-plt.ylabel('Predictions')
-
-#accuracy score
-print('Score:')
-print(model.score(X_test, y_test))
-
 
 from sklearn.cross_validation import cross_val_score, cross_val_predict
 from sklearn import metrics
 
-#Cross Validation
-scores = cross_val_score(model, XX, y, cv=3)
-print('Cross-validated scores:', scores)
 
-predictions = cross_val_predict(model, XX, y, cv=3)
-plt.scatter(y, predictions)
+# Cross-Validation Curve
+from sklearn.model_selection import ShuffleSplit
+from sklearn.model_selection import learning_curve
+
+def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None,
+                        n_jobs=1, train_sizes=np.linspace(.1, 1.0, 5)):
+    plt.clf()
+    plt.figure()
+    plt.title(title)
+    if ylim is not None:
+        plt.ylim(*ylim)
+    plt.xlabel("Training examples")
+    plt.ylabel("Score")
+    train_sizes, train_scores, test_scores = learning_curve(
+        estimator, X, y, cv=cv, n_jobs=n_jobs, train_sizes=train_sizes)
+    train_scores_mean = np.mean(train_scores, axis=1)
+    train_scores_std = np.std(train_scores, axis=1)
+    test_scores_mean = np.mean(test_scores, axis=1)
+    test_scores_std = np.std(test_scores, axis=1)
+    plt.grid()
+
+    plt.fill_between(train_sizes, train_scores_mean - train_scores_std,
+                     train_scores_mean + train_scores_std, alpha=0.1,
+                     color="r")
+    plt.fill_between(train_sizes, test_scores_mean - test_scores_std,
+                     test_scores_mean + test_scores_std, alpha=0.1, color="g")
+    plt.plot(train_sizes, train_scores_mean, 'o-', color="r",
+             label="Training score")
+    plt.plot(train_sizes, test_scores_mean, 'o-', color="g",
+             label="Cross-validation score")
+
+    plt.legend(loc="best")
+    return plt
+
+cv = ShuffleSplit(n_splits=10, test_size=0.33) #shuffle and split into n subsets
+plot_learning_curve(cl, "Cross-validation on mushroom dataset", X, y, (0.7, 1.01), cv=cv, n_jobs=4)
+plt.show()
