@@ -36,6 +36,26 @@ from sklearn import svm
 cl = svm.SVC(C = 0.1)
 cl.fit(X_train, y_train)
 
+#Optimizing the parameters of the SVM
+#Spezifiy parameters and distributions to sample
+parameters = {'kernel':('linear', 'rbf'),
+                'C':[0.0001, 0.001, 0.01, 0.1, 1],
+                'gamma':[0.0001, 0.001, 0.01, 0.1, 1]
+              }
+#Randomized Search Method
+from sklearn.model_selection import RandomizedSearchCV
+
+#Run randomized search
+n_iter_search = 5
+random_search = RandomizedSearchCV(cl, param_distributions=parameters, n_iter=n_iter_search)
+random_search.fit(X,y)
+
+#Grid Search Method
+from sklearn.model_selection import GridSearchCV
+grid_search = GridSearchCV(cl, parameters)
+grid_search.fit(X, y) #iterate over all configurations
+
+
 #Fitting test data
 y_predict = cl.predict(X_test)
 
@@ -54,63 +74,3 @@ cl_linear.fit(X_train,y_train)
 y_predict_linear = cl_linear.predict(X_test)
 score = accuracy_score(y_test, y_predict_linear)
 print(score)
-
-
-"""    
-#Copy paste
-le=preprocessing.LabelEncoder()
-for col in data.columns:
-    data[col]=le.fit_transform(data[col])
-    
-X1=data.iloc[:,1:23]
-y1=data.iloc[:,0]
-
-scaler = preprocessing.StandardScaler()
-X1=scaler.fit_transform(X1)
-
-from sklearn import svm
-from sklearn.model_selection import cross_val_score
-clf_linear2 = svm.LinearSVC( C=0.5)
-scores = cross_val_score(clf_linear2, X1, y1, cv=5)
-scores          
-
-from sklearn import svm
-from sklearn.model_selection import cross_val_score
-clf_linear2 = svm.LinearSVC( C=1)
-scores = cross_val_score(clf_linear2, X1, y1, cv=5)
-scores   
-
-#SVC with linear kernel 
-clf_l=svm.SVC(kernel='linear')
-clf_l.fit(X1,y1)
-scores = cross_val_score(clf_l, X1, y1, cv=5)
-scores
-
-clf_l.coef_
-
-clf_nl=svm.SVC()
-clf_nl.fit(X1,y1)
-scores = cross_val_score(clf_nl, X1, y1, cv=5)
-scores
-
-from sklearn.metrics import accuracy_score
-
-import numpy as np
-from sklearn.model_selection import train_test_split
-
-X_train, X_test, y_train, y_test = train_test_split(X1, y1, test_size=.33, random_state=42)
-
-clf_nl=svm.SVC(C=1)
-clf_nl.fit(X_train,y_train)
-y_pred = clf_nl.predict(X_test)
-scores=accuracy_score(y_test,y_pred)
-scores
-
-clf_nl=svm.SVC(C=10,gamma=10,kernel='poly')
-
-
-clf_nl.fit(X_train,y_train)
-y_pred = clf_nl.predict(X_test)
-scores=accuracy_score(y_test,y_pred)
-scores
-"""
