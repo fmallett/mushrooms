@@ -30,19 +30,26 @@ def data_preprocessing(data, switch = 0 ,test_size = 0.33, random_state = None):
        X = data[:,1:23]
        y = data[:,0]
 
-       X_train, X_test, y_train, y_test = train_test_split(X,y, test_size = 0.5, random_state = random_state )
+       X_train, X_test, y_train, y_test = train_test_split(X,y, test_size = test_size, random_state = random_state )
        return(X_train, X_test, y_train, y_test)
             
     elif switch == 1:
          X = data.iloc[:,1:23]
          y = data.iloc[:,0]
-         X = pd.get_dummies(X)
-         y = pd.get_dummies(y)
          
-         #Avoid dummy trap 
-         X = X.iloc[:,1:].values
+         
+         y = pd.get_dummies(y)
          y = y.iloc[:,1:].values
-         X_train, X_test, y_train, y_test = train_test_split(X,y, test_size = 0.5, random_state = random_state)
+         #loop through the rows 
+         X_afterDummyTrap = pd.DataFrame()
+         for k in X.columns:
+             X_dummy = pd.get_dummies(X[k])
+             X_dummy = X_dummy.iloc[:,1:].values
+             X_dummy = pd.DataFrame(X_dummy)
+             X_afterDummyTrap = pd.concat([X_afterDummyTrap,X_dummy] , axis=1)
+             
+         
+         X_train, X_test, y_train, y_test = train_test_split(X_afterDummyTrap, y, test_size = test_size, random_state = random_state)
          return(X_train, X_test, y_train, y_test)
     else:
         print('ERROR: Input of switch variable must be 0 or 1')
