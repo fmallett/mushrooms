@@ -7,42 +7,28 @@ Created on Wed Apr 18 12:35:17 2018
 """
 import pandas as pd 
 import numpy as np
+import matplotlib.pyplot as plt
 
 data = pd.read_csv('mushrooms.csv')
 
 #Data preprocessing 
-X_train, X_test, y_train, y_test = data_preprocessing(data,0, 0.33, 123)
+X_train, X_test, y_train, y_test = data_preprocessing(data,1, 0.33)
 
 #Fitting to SVC model
 from sklearn import svm
 cl = svm.SVC()
 
 #Optimizing the parameters of the SVM
-from sklearn.metrics import classification_report
 #Spezifiy parameters and distributions to sample
 parameters = {'kernel': ('linear', 'rbf'),
-                'C':[ 0.01, 0.1, 1],
-                'gamma':[0.0001, 0.001, 0.01, 0.1, 1]
+                'C':[ 0.001, 0.01, 0.1, 1],
+                'gamma':[0.0001, 0.001, 0.01, 0.1, 1, 10, 100]
               }
-#Randomized Search Method
-from sklearn.model_selection import RandomizedSearchCV
-
-#Run randomized search
-n_iter_search = 5
-random_search = RandomizedSearchCV(cl, param_distributions=parameters, n_iter=n_iter_search)
-random_search.fit(X,y)
-print("Best parameters:", random_search.best_params_)
-print(classification_report(y_test, random_search.predict(X_test))) 
-
-#Grid Search Method
-from sklearn.model_selection import GridSearchCV
-grid_search = GridSearchCV(cl, parameters)
-grid_search.fit(X, y) #iterate over all configurations
-print("Best parameters:", grid_search.best_params_)
-print(classification_report(y_test, grid_search.predict(X_test))) 
-
+#Optimizing parameters 
+best_para = para_opti(cl, X_train, y_train, X_test, y_test, parameters, 0 , 10)
+    
 #Fitting to SVC model with optimized parameters
-clf = svm.SVC(random_search.best_params_['C'],random_search.best_params_['kernel'],3,random_search.best_params_['gamma'])
+clf = svm.SVC(best_para['C'],best_para['kernel'],3,best_para['gamma'])
 clf.fit(X_train,y_train)
 
 
@@ -55,7 +41,6 @@ score = accuracy_score(y_test, y_predict)
 cm = confusion_matrix(y_test, y_predict)
 print(score)
 print(cm)
-
 
 from sklearn.cross_validation import cross_val_score, cross_val_predict
 from sklearn import metrics
@@ -96,5 +81,5 @@ def plot_learning_curve(estimator, title, X, y, ylim=None, cv=None,
     return plt
 
 cv = ShuffleSplit(n_splits=10, test_size=0.33) #shuffle and split into n subsets
-plot_learning_curve(cl, "Cross-validation on mushroom dataset", X, y, (0.7, 1.01), cv=cv, n_jobs=4)
+plot_learning_curve(cl, "Cross-validation on mushroom dataset", X_test, y_test, (0.7, 1.01), cv=cv, n_jobs=4)
 plt.show()
