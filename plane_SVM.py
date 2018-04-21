@@ -6,31 +6,12 @@ Created on Wed Apr 18 12:35:17 2018
 @author: matthiasboeker
 """
 import pandas as pd 
+import numpy as np
 
 data = pd.read_csv('mushrooms.csv')
 
-X = data.iloc[:,1:23]
-y = data.iloc[:,0]
-XX = data.iloc[:,1:23]
-
-import numpy as np
-from sklearn.model_selection import train_test_split
-
-#X = X.values
-#y = y.values
-
-#Either dummy or scaling 
-
-#Introducing dummy variables
-
-X = pd.get_dummies(X)
-y = pd.get_dummies(y)
-
-#Avoid dummy trap 
-X = X.iloc[:,1:].values
-y = y.iloc[:,1:].values
-
-X_train, X_test, y_train, y_test = train_test_split(X,y, test_size = 0.5, random_state = 1)
+#Data preprocessing 
+X_train, X_test, y_train, y_test = data_preprocessing(data,0, 0.33, 123)
 
 #Fitting to SVC model
 from sklearn import svm
