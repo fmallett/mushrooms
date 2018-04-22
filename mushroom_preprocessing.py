@@ -22,14 +22,17 @@ def data_preprocessing(data, switch = 0 ,test_size = 0.33, random_state = None):
     if switch == 0:  
        from sklearn import preprocessing
        label_encoder =preprocessing.LabelEncoder()
-       for i in data.columns:
-           data[i] = label_encoder.fit_transform(data[i])
-                   
-       scaler = preprocessing.StandardScaler()
-       data =scaler.fit_transform(data)
+       
        X = data[:,1:23]
        y = data[:,0]
 
+       
+       for i in data.columns:
+           X[i] = label_encoder.fit_transform(X[i])
+                   
+       scaler = preprocessing.StandardScaler()
+       X =scaler.fit_transform(X)
+      
        X_train, X_test, y_train, y_test = train_test_split(X,y, test_size = test_size, random_state = random_state )
        return(X_train, X_test, y_train, y_test)
             
