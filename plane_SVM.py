@@ -8,6 +8,7 @@ Created on Wed Apr 18 12:35:17 2018
 import pandas as pd 
 import numpy as np
 import matplotlib.pyplot as plt
+import time
 
 data = pd.read_csv('mushrooms.csv')
 
@@ -29,13 +30,25 @@ parameters = {'kernel': ('linear', 'rbf'),
                 'gamma':[0.0001, 0.001, 0.01, 0.1, 1, 10, 100]
               }
 #Optimizing parameters - Dummy - Grid
+start = time.time()
 best_para_d_G = para_opti(cl, X_train_d, y_train_d, X_test_d, y_test_d, parameters, 1 , 10)
+end = time.time()
+print('Dummy-Grid Search Time',end - start, ' secs')
 #Optimizing parameters - Dummy - Random
+start = time.time()
 best_para_d_R = para_opti(cl, X_train_d, y_train_d, X_test_d, y_test_d, parameters, 0 , 10)
+end = time.time()
+print('Dummy-Random Search Time',end - start, ' secs')
 #Optimizing parameters - Stand - Grid
+start = time.time()
 best_para_s_G = para_opti(cl, X_train_s, y_train_s, X_test_s, y_test_s, parameters, 1 , 10)
+end = time.time()
+print('Standardized-Grid Search Time',end - start, ' secs')
 #Optimizing parameters - Stand - Random
+start = time.time()
 best_para_s_R = para_opti(cl, X_train_s, y_train_s, X_test_s, y_test_s, parameters, 0 , 10)  
+end = time.time()
+print('Standardized-Random Search Time', end - start, ' secs')
 
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix 
