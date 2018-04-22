@@ -101,7 +101,7 @@ print('Standardize-Random Confusion matrix' , cm)
 from sklearn import metrics
 probs = clf_d_G.predict_proba(X_test_d)
 preds = probs[:,1]
-fpr, tpr, threshold = metrics.roc_curve(y_test, preds)
+fpr, tpr, threshold = metrics.roc_curve(y_test_d, preds)
 roc_auc = metrics.auc(fpr, tpr)
 
 
@@ -122,7 +122,7 @@ plt.show()
 
 probs = clf_d_R.predict_proba(X_test_d)
 preds = probs[:,1]
-fpr, tpr, threshold = metrics.roc_curve(y_test, preds)
+fpr, tpr, threshold = metrics.roc_curve(y_test_d, preds)
 roc_auc = metrics.auc(fpr, tpr)
 
 # plot ROC curve
@@ -141,7 +141,7 @@ plt.show()
 
 probs = clf_s_G.predict_proba(X_test_s)
 preds = probs[:,1]
-fpr, tpr, threshold = metrics.roc_curve(y_test, preds)
+fpr, tpr, threshold = metrics.roc_curve(y_test_d, preds)
 roc_auc = metrics.auc(fpr, tpr)
 
 # plot ROC curve
@@ -160,7 +160,7 @@ plt.show()
 
 probs = clf_s_R.predict_proba(X_test_s)
 preds = probs[:,1]
-fpr, tpr, threshold = metrics.roc_curve(y_test, preds)
+fpr, tpr, threshold = metrics.roc_curve(y_test_d, preds)
 roc_auc = metrics.auc(fpr, tpr)
 
 # plot ROC curve
@@ -182,7 +182,7 @@ from sklearn.cross_validation import cross_val_score, cross_val_predict
 from sklearn import metrics
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import learning_curve
-
+from sklearn.model_selection import ShuffleSplit
 
 cv = ShuffleSplit(n_splits=10, test_size=0.5, random_state=4) #shuffle and split into n subsets
 
