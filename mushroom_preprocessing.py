@@ -23,18 +23,18 @@ def data_preprocessing(data, switch = 0 ,test_size = 0.33, random_state = None):
        from sklearn import preprocessing
        label_encoder =preprocessing.LabelEncoder()
        
-       X = data[:,1:23]
-       y = data[:,0]
+       X = data.iloc[:,1:23]
+       y = data.iloc[:,0]
 
        
-       for i in data.columns:
+       for i in X.columns:
            X[i] = label_encoder.fit_transform(X[i])
                    
        scaler = preprocessing.StandardScaler()
        X =scaler.fit_transform(X)
       
-       X_train, X_test, y_train, y_test = train_test_split(X,y, test_size = test_size, random_state = random_state )
-       return(X_train, X_test, y_train, y_test)
+       X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = test_size, random_state = random_state )
+       return(X_train, X_test, y_train, y_test,X ,y)
             
     elif switch == 1:
          X = data.iloc[:,1:23]
@@ -53,7 +53,7 @@ def data_preprocessing(data, switch = 0 ,test_size = 0.33, random_state = None):
              
          
          X_train, X_test, y_train, y_test = train_test_split(X_afterDummyTrap, y, test_size = test_size, random_state = random_state)
-         return(X_train, X_test, y_train, y_test)
+         return(X_train, X_test, y_train, y_test, X_afterDummyTrap ,y )
     else:
         print('ERROR: Input of switch variable must be 0 or 1')
     
