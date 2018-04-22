@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 data = pd.read_csv('mushrooms.csv')
 
 #Data preprocessing 
-X_train, X_test, y_train, y_test = data_preprocessing(data,1, 0.33)
+X_train, X_test, y_train, y_test = data_preprocessing(data,1, 0.99)
 
 #Fitting to SVC model
 from sklearn import svm
@@ -25,10 +25,10 @@ parameters = {'kernel': ('linear', 'rbf'),
                 'gamma':[0.0001, 0.001, 0.01, 0.1, 1, 10, 100]
               }
 #Optimizing parameters 
-best_para = para_opti(cl, X_train, y_train, X_test, y_test, parameters, 0 , 10)
+best_para = para_opti(cl, X_train, y_train, X_test, y_test, parameters, 1 , 10)
     
 #Fitting to SVC model with optimized parameters
-clf = svm.SVC(best_para['C'],best_para['kernel'],3,best_para['gamma'])
+clf = svm.SVC(best_para['C'],'rbf',3,best_para['gamma'], probability = True)
 clf.fit(X_train,y_train)
 
 
@@ -41,6 +41,28 @@ score = accuracy_score(y_test, y_predict)
 cm = confusion_matrix(y_test, y_predict)
 print(score)
 print(cm)
+
+
+# calculate the fpr and tpr for all thresholds of the classification
+from sklearn import metrics
+probs = clf.predict_proba(X_test)
+preds = probs[:,1]
+fpr, tpr, threshold = metrics.roc_curve(y_test, preds)
+roc_auc = metrics.auc(fpr, tpr)
+
+# plot ROC curve
+plt.title('HWA1-C Receiver Operating Characteristic of SVM')
+plt.plot(fpr, tpr, 'b', label = 'AUC = %0.4f' % roc_auc)
+plt.legend(loc = 'lower right')
+plt.plot([0, 1], [0, 1],'r--')
+plt.plot([0, 0], [0, 1], c = 'grey')
+plt.plot([0, 1], [1, 1], c = 'grey')
+plt.xlim([-0.05, 1.05])
+plt.ylim([-0.05, 1.05])
+plt.ylabel('True Positive Rate')
+plt.xlabel('False Positive Rate')
+plt.show()
+
 
 from sklearn.cross_validation import cross_val_score, cross_val_predict
 from sklearn import metrics
