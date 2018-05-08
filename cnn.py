@@ -27,7 +27,7 @@ classifier  = Sequential()
 
 #Step 1: Convolution - feature dector - find features in image
  #paramteters of convolution layer.. number of filters, rows and columns
-classifier.add(Convolution2D(32, 3, 3, input_shape=(64, 64, 3), activation = 'relu'))  #good practice to start with 32, then 64, 128..
+classifier.add(Convolution2D(32, 3, 3, input_shape=(50, 50, 3), activation = 'relu'))  #good practice to start with 32, then 64, 128..
 
 #Step 2: Max Pooling - stride of 2
 classifier.add(MaxPooling2D(pool_size = (2, 2)))
@@ -46,9 +46,8 @@ classifier.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = [
 
 
 #Convert numpy array to a folder containing the images
-convert_to_image(x_train, "x_train")
-convert_to_image(x_test, "x_test")
-
+convert_to_image(x_train, "training", y_train)
+convert_to_image(x_test, "testing", y_test)
 
 
 #-----Not sure about keeping this as we already have images of the same size and in folders... 
@@ -66,19 +65,19 @@ train_datagen = ImageDataGenerator(
 test_datagen = ImageDataGenerator(rescale=1./255)
 
 
-training_set = train_datagen.flow_from_directory('dataset/x_train', #this will be a folder in our directory
+training_set = train_datagen.flow_from_directory('dataset/training', #this will be a folder in our directory
                                                 target_size=(50, 50),
                                                 batch_size=32,
                                                 class_mode='binary') #2 classes is binary eg cat and dog
 
-test_set = test_datagen.flow_from_directory('dataset/x_test',
+test_set = test_datagen.flow_from_directory('dataset/testing',
                                             target_size=(50, 50),
                                             batch_size=32,
                                             class_mode='binary')
 
 classifier.fit_generator(training_set,
                     steps_per_epoch=4155, #no. of images in training set
-                    epochs=5,
+                    epochs=5, #should change this to a higher number for more accuracy but will take far longer
                     validation_data=test_set,
                     validation_steps=1386) #no. of images in test set
 
