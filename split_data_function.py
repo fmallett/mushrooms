@@ -24,7 +24,7 @@ def split_data(data, index):
     test_data = list()
     train_data = list()
     k = 0
-    for i in range(0,(size-1)/index):
+    for i in range(0,(size-1)//index):
         temp = data[i*index]
         test_data.append(temp)
         if i != 0:

@@ -12,6 +12,16 @@ from keras.layers import MaxPooling2D # add pooling layers
 from keras.layers import Flatten #flattening
 from keras.layers import Dense #add fully connected layers
 
+import numpy as np
+
+data_x = np.load('X.npy')
+data_y = np.load('Y.npy')
+
+
+x_test, x_train = split_data(data_x, 4)
+y_test, y_train = split_data(data_y, 4)
+
+
 #Initialising the CNN
 classifier  = Sequential()
 
@@ -35,6 +45,15 @@ classifier.add(Dense(output_dim = 1, activation = 'sigmoid')) #sigmoid for binar
 classifier.compile(optimizer = 'adam', loss = 'binary_crossentropy', metrics = ['accuracy'])
 
 
+#Convert numpy array to a folder containing the images
+convert_to_image(x_train, "x_train")
+convert_to_image(x_test, "x_test")
+
+
+
+#-----Not sure about keeping this as we already have images of the same size and in folders... 
+#I think all we need to do is fit the classifier with the input arrays to train
+
 #Fit CNN to the input -- from keras documentation
 from keras.preprocessing.image import ImageDataGenerator
 
@@ -46,20 +65,21 @@ train_datagen = ImageDataGenerator(
 
 test_datagen = ImageDataGenerator(rescale=1./255)
 
-training_set = train_datagen.flow_from_directory('dataset/training_set', #this will be a folder in our directory
-                                                target_size=(64, 64),
+
+training_set = train_datagen.flow_from_directory('dataset/x_train', #this will be a folder in our directory
+                                                target_size=(50, 50),
                                                 batch_size=32,
                                                 class_mode='binary') #2 classes is binary eg cat and dog
 
-test_set = test_datagen.flow_from_directory('dataset/test_set',
-                                            target_size=(64, 64),
+test_set = test_datagen.flow_from_directory('dataset/x_test',
+                                            target_size=(50, 50),
                                             batch_size=32,
                                             class_mode='binary')
 
 classifier.fit_generator(training_set,
-                    steps_per_epoch=8000,
-                    epochs=25,
+                    steps_per_epoch=4155, #no. of images in training set
+                    epochs=5,
                     validation_data=test_set,
-                    validation_steps=2000)
+                    validation_steps=1386) #no. of images in test set
 
 
