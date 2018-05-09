@@ -38,6 +38,15 @@ classifier.add(Flatten())
 #Step 4: Full Connection
 #add hidden layer
 classifier.add(Dense(output_dim = 128, activation = 'relu')) #no. of nodes in hidden layer (between no of nodes in input and output)
+classifier.add(Dense(output_dim = 128, activation = 'relu'))
+classifier.add(Dense(output_dim = 128, activation = 'relu'))
+classifier.add(Dense(output_dim = 128, activation = 'relu'))
+classifier.add(Dense(output_dim = 128, activation = 'relu'))
+classifier.add(Dense(output_dim = 128, activation = 'relu'))
+classifier.add(Dense(output_dim = 128, activation = 'relu'))
+classifier.add(Dense(output_dim = 128, activation = 'relu'))
+classifier.add(Dense(output_dim = 128, activation = 'relu'))
+
 #output layer
 classifier.add(Dense(output_dim = 1, activation = 'sigmoid')) #sigmoid for binary output
 
@@ -76,9 +85,10 @@ test_set = test_datagen.flow_from_directory('dataset/testing',
                                             class_mode='binary')
 
 classifier.fit_generator(training_set,
-                    steps_per_epoch=4155, #no. of images in training set
-                    epochs=5, #should change this to a higher number for more accuracy but will take far longer
+                    steps_per_epoch=1000, #no. of images in training set
+                    epochs=2500, #should change this to a higher number for more accuracy but will take far longer
                     validation_data=test_set,
-                    validation_steps=1386) #no. of images in test set
+                    validation_steps=100) #no. of images in test set
 
 
+#different ACTIVATION FUNCTIONS on different layers
