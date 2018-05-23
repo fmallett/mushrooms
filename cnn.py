@@ -27,25 +27,24 @@ classifier  = Sequential()
 
 #Step 1: Convolution - feature dector - find features in image
  #paramteters of convolution layer.. number of filters, rows and columns
-classifier.add(Convolution2D(32, 3, 3, input_shape=(50, 50, 3), activation = 'relu'))  #good practice to start with 32, then 64, 128..
+classifier.add(Convolution2D(64, 3, 3, input_shape=(50, 50, 3), activation = 'relu'))  #good practice to start with 32, then 64, 128..
 
 #Step 2: Max Pooling - stride of 2
 classifier.add(MaxPooling2D(pool_size = (2, 2)))
+
+#adding another convolutional layer
+#classifier.add(Convolution2D(128, 3, 3, input_shape=(50, 50, 3), activation = 'relu'))  #good practice to start with 32, then 64, 128..
+#adding another convolutional layer
+#classifier.add(Convolution2D(256, 3, 3, input_shape=(50, 50, 3), activation = 'relu'))  #good practice to start with 32, then 64, 128..
 
 #Step 3: Flattening -into 1D vector
 classifier.add(Flatten())
 
 #Step 4: Full Connection
 #add hidden layer
+classifier.add(Dense(output_dim = 64, activation = 'relu')) #no. of nodes in hidden layer (between no of nodes in input and output)
+
 classifier.add(Dense(output_dim = 128, activation = 'relu')) #no. of nodes in hidden layer (between no of nodes in input and output)
-classifier.add(Dense(output_dim = 128, activation = 'relu'))
-classifier.add(Dense(output_dim = 128, activation = 'relu'))
-classifier.add(Dense(output_dim = 128, activation = 'relu'))
-classifier.add(Dense(output_dim = 128, activation = 'relu'))
-classifier.add(Dense(output_dim = 128, activation = 'relu'))
-classifier.add(Dense(output_dim = 128, activation = 'relu'))
-classifier.add(Dense(output_dim = 128, activation = 'relu'))
-classifier.add(Dense(output_dim = 128, activation = 'relu'))
 
 #output layer
 classifier.add(Dense(output_dim = 1, activation = 'sigmoid')) #sigmoid for binary output
@@ -84,11 +83,32 @@ test_set = test_datagen.flow_from_directory('dataset/testing',
                                             batch_size=32,
                                             class_mode='binary')
 
-classifier.fit_generator(training_set,
-                    steps_per_epoch=1000, #no. of images in training set
-                    epochs=2500, #should change this to a higher number for more accuracy but will take far longer
+CNN = classifier.fit_generator(training_set,
+                    steps_per_epoch=400, #no. of images in training set
+                    epochs=5, #98should change this to a higher number for more accuracy but will take far longer
                     validation_data=test_set,
-                    validation_steps=100) #no. of images in test set
+                    validation_steps=50) #no. of images in test set
 
 
 #different ACTIVATION FUNCTIONS on different layers
+# Accuracy and Validation Graphs
+
+import matplotlib.pyplot as plt
+plt.rcParams['figure.figsize'] = (6,5)
+plt.plot(CNN.history['acc'])
+plt.plot(CNN.history['val_acc'])
+plt.title( "Accuracy ")
+plt.ylabel('Accuracy')
+plt.xlabel('Epoch')
+plt.legend(['train', 'val'], loc='upper left')
+plt.show()
+plt.close()
+# summarize history for loss
+plt.plot(CNN.history['loss'])
+plt.plot(CNN.history['val_loss'])
+plt.title("Error")
+plt.ylabel('Loss')
+plt.xlabel('Epoch')
+plt.legend(['train', 'val'], loc='upper right')
+plt.show()
+plt.close()
