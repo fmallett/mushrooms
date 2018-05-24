@@ -28,6 +28,8 @@ classifier  = Sequential()
 #Step 1: Convolution - feature dector - find features in image
  #paramteters of convolution layer.. number of filters, rows and columns
 classifier.add(Convolution2D(64, 3, 3, input_shape=(50, 50, 3), activation = 'relu'))  #good practice to start with 32, then 64, 128..
+classifier.add(Convolution2D(64, 3, 3, input_shape=(50, 50, 3), activation = 'relu'))  #good practice to start with 32, then 64, 128..
+classifier.add(Convolution2D(64, 3, 3, input_shape=(50, 50, 3), activation = 'relu'))  #good practice to start with 32, then 64, 128..
 
 #Step 2: Max Pooling - stride of 2
 classifier.add(MaxPooling2D(pool_size = (2, 2)))
@@ -42,8 +44,6 @@ classifier.add(Flatten())
 
 #Step 4: Full Connection
 #add hidden layer
-classifier.add(Dense(output_dim = 64, activation = 'relu')) #no. of nodes in hidden layer (between no of nodes in input and output)
-
 classifier.add(Dense(output_dim = 128, activation = 'relu')) #no. of nodes in hidden layer (between no of nodes in input and output)
 
 #output layer
@@ -84,10 +84,10 @@ test_set = test_datagen.flow_from_directory('dataset/testing',
                                             class_mode='binary')
 
 CNN = classifier.fit_generator(training_set,
-                    steps_per_epoch=400, #no. of images in training set
-                    epochs=5, #98should change this to a higher number for more accuracy but will take far longer
+                    steps_per_epoch=20, #no. of images in training set
+                    epochs=500, #98should change this to a higher number for more accuracy but will take far longer
                     validation_data=test_set,
-                    validation_steps=50) #no. of images in test set
+                    validation_steps=10) #no. of images in test set
 
 
 #different ACTIVATION FUNCTIONS on different layers
