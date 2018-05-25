@@ -11,6 +11,8 @@ from keras.layers import Convolution2D #adding conoltuion layers
 from keras.layers import MaxPooling2D # add pooling layers
 from keras.layers import Flatten #flattening
 from keras.layers import Dense #add fully connected layers
+from keras.layers import Dropout #prevent overfitting
+
 
 import numpy as np
 
@@ -45,6 +47,10 @@ classifier.add(Flatten())
 #Step 4: Full Connection
 #add hidden layer
 classifier.add(Dense(output_dim = 128, activation = 'relu')) #no. of nodes in hidden layer (between no of nodes in input and output)
+
+#Add dropout layer
+#keras.layers.Dropout(rate, noise_shape=None, seed=None)
+classifier.add(Dropout(0.4))
 
 #output layer
 classifier.add(Dense(output_dim = 1, activation = 'sigmoid')) #sigmoid for binary output
